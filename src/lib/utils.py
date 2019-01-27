@@ -66,12 +66,11 @@ def etl_cli(instance, args):
             gen = instance.retrieve_data(ml_cfg)
             for data, meta in gen:
                 count += 1
-                print("Training batch {}".format(count))
                 if max_count and count == max_count:
                     break
         except Exception as err:
             print("ERROR pulling training data: {}".format(err))
-    print("{} training batches of size {}".format(count, batch_size))
+    print("{} training batch(es) of size {}".format(count, batch_size))
 
     count = 0
     max_count = int(args.get('-e', -1))
@@ -80,12 +79,11 @@ def etl_cli(instance, args):
             gen = instance.get_test_data()
             for data, meta in gen:
                 count += 1
-                print("Test batch {}".format(count))
                 if max_count and count == max_count:
                     break
         except Exception as err:
             print("ERROR pulling test data: {}".format(err))
-    print("{} test batches of size {}".format(count, batch_size))
+    print("{} test batch(es) of size {}".format(count, batch_size))
 
     count = 0
     max_count = int(args.get('-v', -1))
@@ -94,9 +92,8 @@ def etl_cli(instance, args):
             gen = instance.get_validation_data()
             for data, meta in gen:
                 count += 1
-                print("Validation batch {}".format(count))
                 if max_count and count == max_count:
                     break
         except Exception as err:
             print("ERROR pulling validation data: {}".format(err))
-    print("{} test batches of size {}".format(count, batch_size))
+    print("{} test batch(es) of size {}".format(count, batch_size))
