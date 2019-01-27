@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 
+"""Handles the Translate portion of the E-T-L pipeline
+
+Usage:
+  translator.py <ml_cfg>
+
+Options:
+  -h --help         Show this config
+"""
+from docopt import docopt
+
 from functools import partial
 import pandas as pd
 import pywt
 from scipy import signal as dsp
 import seaborn as sns
-import yaml
 
 from etl import ETL
-from model import Model
 from utils import handle_config
 from utils import sort_and_reindex
 from utils import within_ratio
 
 sns.set()
-
-
-"""
-This file should handle the E-T-L portion to take data extracted from the
-parquet files and translate it into something to feed to the ML
-"""
 
 
 class Translator(ETL):
@@ -34,10 +36,10 @@ class Translator(ETL):
         dfs = [resort(self.get_peak_info(sig)) for sig in cD]
         self.plot_phases(dfs)
 
-        max_height = cfg.get('max_height')
-        height_ratio = cfg.get('max_height_ratio')
-        max_dist = cfg.get('max_distance')
-        max_peaks = cfg.get('max_ticks_removal')
+        max_height = self.ml_cfg.get('max_height')
+        height_ratio = self.ml_cfg.get('max_height_ratio')
+        max_dist = self.ml_cfg.get('max_distance')
+        max_peaks = self.ml_cfg.get('max_ticks_removal')
         dfs = [
             self.remove_symmetric_pulses(df, height_ratio, max_dist, max_peaks)
             for df in dfs
@@ -60,7 +62,7 @@ class Translator(ETL):
         return df
 
     def get_peak_info(self, cD):
-        args = cfg.get('peak_finder_args')
+        args = self.ml_cfg.get('peak_finder_args')
         peaks, pinfo = dsp.find_peaks(cD, **args)
         pinfo.update({'peak_index': peaks})
 
@@ -105,11 +107,19 @@ class Translator(ETL):
 
 
 if __name__ == '__main__':
-    with open('../config.yaml', 'r') as f:
-        cfg = yaml.load(f)
+    args = docopt(__doc__)
+    ml_cfg = args.get('<ml_cfg>')
+    translator = Translator()
 
-    DATA_DIR = '../data'
-    test_start = 8712  # TODO: What is this?
+    gen = translator.retrieve_data(ml_cfg)
+    count = 0
+    for data, meta in gen:
+        count += 1
+    batch_size = translator.ml_cfg.get('batch_size')
+    print("{} training batches of size {}".format(count, batch_size))
 
-    model = Model()
-    print("Complete")
+    gen = translator.get_test_data()
+    count = 0
+    for data, meta in gen:
+        count += 1
+    print("{} test batches of size {}".format(count, batch_size))
