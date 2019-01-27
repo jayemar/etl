@@ -22,10 +22,12 @@ from utils import handle_config
 class Extractor(ETL):
 
     def retrieve_data(self, ml_cfg):
-        self.ml_cfg = handle_config(ml_cfg)
+        self._ml_cfg = handle_config(ml_cfg)
         return get_data_generator('train', self.ml_cfg.get('batch_size'))
 
     def get_test_data(self):
+        if not self.ml_cfg:
+            raise Exception("ml_cfg not yet set via retrieve_data method")
         return get_data_generator('test', self.ml_cfg.get('batch_size'))
 
 

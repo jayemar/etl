@@ -14,6 +14,8 @@ Options:
 from docopt import docopt
 
 from etl import ETL
+from extractor import Extractor
+from translator import Translator
 from utils import etl_cli
 from utils import handle_config
 
@@ -21,11 +23,15 @@ from utils import handle_config
 class Loader(ETL):
 
     def retrieve_data(self, ml_cfg):
-        self.ml_cfg = handle_config(ml_cfg)
+        self._ml_cfg = handle_config(ml_cfg)
         return self.data_in.retrieve_data(ml_cfg)
 
 
 if __name__ == '__main__':
     args = docopt(__doc__)
     loader = Loader()
+    translator = Translator()
+    extractor = Extractor()
+    translator.set_data_input(extractor)
+    loader.set_data_input(translator)
     etl_cli(loader, args)
