@@ -5,7 +5,7 @@ from pathlib import Path
 from pyarrow import parquet as pq
 import yaml
 
-DATA_DIR = "../data/"
+DATA_DIR = "../../data/"
 TEST_START = 8712  # First 8711 lines are training data
 
 
@@ -15,7 +15,7 @@ def handle_config(config):
         with open(config, 'r') as f:
             config = yaml.load(f)
     return config
-        
+
 
 def get_data_generator(data_type, num_lines_per_batch):
     """data_type should be either 'train' or 'test'"""
@@ -36,18 +36,10 @@ def get_data_generator(data_type, num_lines_per_batch):
 
 
 def sort_and_reindex(df, col_name):
+    """Sort DataFrame base on column name and reindex"""
     df = df.sort_values(col_name, inplace=False)
     df = df.reset_index(inplace=False, drop=True)
     return df
-
-
-def too_tall(df, threshold, vals=False):
-    """Return index of peaks above threshold value
-    Include height of peaks if vals == True
-    """
-    field = 'peak_heights'
-    return_fields = ['peak_index', field] if vals else ['peak_index']
-    return df[(abs(df[field])) > threshold][return_fields]
 
 
 def within_ratio(h1, h2, ratio):
@@ -62,12 +54,49 @@ def within_ratio(h1, h2, ratio):
     return resp
 
 
-def pos_neg_pairs(df, threshold, hdiff, vdiff, vals=False):
-    """Return index of peaks with a matching peak of the opposite polarity
-    Differnce in peak heights must be within hdiff
-    Differnce in sample index must be within vdiff
-    Include height of peaks if vals == True
-    """
-    field = 'peak_heights'
-    return_fields = ['peak_index', field] if vals else ['peak_index']
-    tmp = df.sort_values('peak_index')[['peak_index', 'peak_heights']]
+def etl_cli(instance, args):
+    """Handles calling the E/T/L classes from the command line"""
+    ml_cfg = handle_config(args.get('<ml_cfg>'))
+    batch_size = ml_cfg.get('batch_size')
+
+    count = 0
+    max_count = int(args.get('-r', -1))
+    if max_count not in [-1, 0]:
+        try:
+            gen = instance.retrieve_data(ml_cfg)
+            for data, meta in gen:
+                count += 1
+                print("Training batch {}".format(count))
+                if max_count and count == max_count:
+                    break
+        except Exception as err:
+            print("ERROR pulling training data: {}".format(err))
+    print("{} training batches of size {}".format(count, batch_size))
+
+    count = 0
+    max_count = int(args.get('-e', -1))
+    if max_count not in [-1, 0]:
+        try:
+            gen = instance.get_test_data()
+            for data, meta in gen:
+                count += 1
+                print("Test batch {}".format(count))
+                if max_count and count == max_count:
+                    break
+        except Exception as err:
+            print("ERROR pulling test data: {}".format(err))
+    print("{} test batches of size {}".format(count, batch_size))
+
+    count = 0
+    max_count = int(args.get('-v', -1))
+    if max_count not in [-1, 0]:
+        try:
+            gen = instance.get_validation_data()
+            for data, meta in gen:
+                count += 1
+                print("Validation batch {}".format(count))
+                if max_count and count == max_count:
+                    break
+        except Exception as err:
+            print("ERROR pulling validation data: {}".format(err))
+    print("{} test batches of size {}".format(count, batch_size))
