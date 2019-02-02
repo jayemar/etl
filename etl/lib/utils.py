@@ -19,6 +19,14 @@ def handle_config(config):
     return config
 
 
+def clean_args(args):
+    """Convert arg values into more pythonic names"""
+    return {
+        k.lstrip('-').lstrip('<').rstrip('>').replace('-', '_'):
+        args[k] for k in args.keys()
+    }
+
+
 def get_data_generator(data_type, num_lines_per_batch):
     """data_type should be either 'train' or 'test'"""
     if data_type not in ['train', 'test']:
