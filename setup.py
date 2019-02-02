@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="dataloader",
+    name="etl",
     version="1.0.0",
     description="DataLoader for ML applications",
     install_requires=[
