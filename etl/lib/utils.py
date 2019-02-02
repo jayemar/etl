@@ -14,6 +14,8 @@ def handle_config(config):
     if type(config) == str:
         with open(config, 'r') as f:
             config = yaml.load(f)
+    if not config:
+        config = dict()
     return config
 
 
