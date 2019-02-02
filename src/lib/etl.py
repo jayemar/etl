@@ -2,7 +2,7 @@
 
 """Parent class/interface for ETL classes"""
 
-from utils import handle_config
+from .utils import handle_config
 
 
 class ETL:

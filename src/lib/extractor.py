@@ -13,10 +13,10 @@ Options:
 """
 from docopt import docopt
 
-from etl import ETL
-from utils import etl_cli
-from utils import get_data_generator
-from utils import handle_config
+from .etl import ETL
+from .utils import etl_cli
+from .utils import get_data_generator
+from .utils import handle_config
 
 
 class Extractor(ETL):

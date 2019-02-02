@@ -13,11 +13,11 @@ Options:
 """
 from docopt import docopt
 
-from etl import ETL
-from extractor import Extractor
-from translator import Translator
-from utils import etl_cli
-from utils import handle_config
+from .etl import ETL
+from .extractor import Extractor
+from .translator import Translator
+from .utils import etl_cli
+from .utils import handle_config
 
 
 class Loader(ETL):

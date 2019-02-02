@@ -18,12 +18,12 @@ import pandas as pd
 import pywt
 from scipy import signal as dsp
 
-from etl import ETL
-from extractor import Extractor
-from utils import etl_cli
-from utils import handle_config
-from utils import sort_and_reindex
-from utils import within_ratio
+from .etl import ETL
+from .extractor import Extractor
+from .utils import etl_cli
+from .utils import handle_config
+from .utils import sort_and_reindex
+from .utils import within_ratio
 
 
 class Translator(ETL):
