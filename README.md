@@ -1,6 +1,9 @@
 # ETL - Extract / Translate / Load
 Provides a basic directory structure and template files for setting up a DataLoader using the ETL methodology.
 
+## Installation
+`pip install git+https://gitlab.com/jayemar/etl.git`
+
 ## Basic Usage
 ```python
 from etl.dataloader import DataLoader
