@@ -14,7 +14,7 @@ Options:
 from docopt import docopt
 
 from .lib.etl import ETL
-from .lib.extrator import Extractor
+from .lib.extractor import Extractor
 from .lib.loader import Loader
 from .lib.translator import Translator
 from .lib.utils import handle_config
