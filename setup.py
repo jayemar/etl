@@ -14,5 +14,6 @@ setuptools.setup(
         'PyYAML',
         'scikit-learn',
         'scipy'
-    ]
+    ],
+    packages=setuptools.find_packages()
 )
