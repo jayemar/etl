@@ -21,8 +21,11 @@ from .utils import handle_config
 
 class Extractor(ETL):
 
+    def __init__(self, env_cfg={}):
+        super(Extractor, self).__init__(env_cfg)
+
     def retrieve_data(self, ml_cfg):
-        self._ml_cfg = handle_config(ml_cfg)
+        self.ml_cfg = handle_config(ml_cfg)
         return get_data_generator('train', self.ml_cfg.get('batch_size'))
 
     def get_test_data(self):
