@@ -42,6 +42,7 @@ def get_data_generator(data_type, num_lines_per_batch):
         ).to_pandas().values.T
         meta = meta_df.iloc[start: end]
         start = end
+        end += num_lines_per_batch
         yield data, meta
 
 
