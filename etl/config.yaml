@@ -1,0 +1,13 @@
+---
+
+env_cfg:
+  data_dir: /data
+  translator_pool: 4
+
+model_cfg:
+  n_estimators: 100
+
+ml_cfg:
+  batch_size: 1024
+  epochs: 10
+
